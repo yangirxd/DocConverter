@@ -1,32 +1,31 @@
 ﻿using DocConverter.Application.Interfaces;
 using DocConverter.Application.Settings;
 using DocConverter.Application.Helpers;
-using DocConverter.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace DocConverter.Application.Services
 {
-    public class Converter : IConverter
+    public class Converter(
+        IConverterProvider converter) : IConverter
     {
-        private readonly ConvertibleItem _convertibleItem;
-        private readonly IConverterProvider _converter;
 
-        public Converter (ConvertibleItem convertibleItem, IConverterProvider converter)
+        public async Task<byte[]> ConvertAsync(IFormFile formFile, string convertTo)
         {
-            _convertibleItem = convertibleItem;
-            _converter = converter;
-        }
 
-        public virtual async Task<byte[]> Convert()
-        {
-            await FileHelpers.SaveFileAsync(_convertibleItem.File, _convertibleItem.UniqueFileName, AppSettings.WorkingDirectory);
-            var outPath = Path.Combine(AppSettings.WorkingDirectory, $"{_convertibleItem.UniqueFileNameWithoutExtension}.{_convertibleItem.ConvertTo}");
+            var uniqueFileName = Path.GetFileNameWithoutExtension(formFile.FileName) + Guid.NewGuid().ToString();
+            var fullFileName = uniqueFileName + Path.GetExtension(formFile.FileName);
+
+            await FileHelpers.SaveFileAsync(formFile, fullFileName, AppSettings.WorkingDirectory);
+            var outPath = Path.Combine(AppSettings.WorkingDirectory, $"{uniqueFileName}.{convertTo}");
+
+            await converter.ExecuteAsync(fullFileName, $" --headless --convert-to {outPath}");
+
             var result = await FileHelpers.GetFileInBuffer(outPath);
-            await _converter.Execute(outPath);
-            ClearFiles(Path.Combine(AppSettings.WorkingDirectory, _convertibleItem.UniqueFileName), outPath);
+            ClearFiles(Path.Combine(AppSettings.WorkingDirectory, fullFileName), outPath);
 
             return result;
         }
-
+        
         private static void ClearFiles(string inFile, string outFile)
         {
             File.Delete(inFile);

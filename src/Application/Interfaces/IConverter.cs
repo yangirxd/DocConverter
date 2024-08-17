@@ -1,7 +1,9 @@
-﻿namespace DocConverter.Application.Interfaces
+﻿using Microsoft.AspNetCore.Http;
+
+namespace DocConverter.Application.Interfaces
 {
     public interface IConverter
     {
-        Task<byte[]> Convert();
+        Task<byte[]> ConvertAsync(IFormFile formFile, string convertTo);
     }
 }

@@ -1,6 +1,4 @@
-﻿using DocConverter.Domain.Entities;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace DocConverter.Application.Helpers
 {

@@ -20,19 +20,19 @@ RUN apt install -y fonts-liberation
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["src/Converter.Api/Converter.Api.csproj", "src/Converter.Api/"]
+COPY ["src/ConverterApi/ConverterApi.csproj", "src/ConverterApi/"]
 COPY ["src/Domain/Domain.csproj", "src/Domain/"]
 COPY ["src/Infrastructure/Infrastructure.csproj", "src/Infrastructure/"]
 COPY ["src/Application/Application.csproj", "src/Application/"]
-RUN dotnet restore "src/Converter.Api/Converter.Api.csproj"
+RUN dotnet restore "src/ConverterApi/ConverterApi.csproj"
 COPY . .
-WORKDIR "/src/src/Converter.Api"
-RUN dotnet build "Converter.Api.csproj" -c Release -o /app/build
+WORKDIR "/src/src/ConverterApi"
+RUN dotnet build "ConverterApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Converter.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ConverterApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Converter.Api.dll"]
+ENTRYPOINT ["dotnet", "ConverterApi.dll"]

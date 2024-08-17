@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DocConverter.Domain.Entities
 {
-    public class ConvertibleItem : BaseEntity
+    public class ConvertibleItem
     {
 
         public ConvertibleItem(IFormFile file, string convertTo = "pdf")
@@ -21,7 +21,7 @@ namespace DocConverter.Domain.Entities
 
         public string FileNameWithoutExtension => Path.GetFileNameWithoutExtension(File.FileName);
         public string FileExtension => Path.GetExtension(File.FileName);
-        public string UniqueFileNameWithoutExtension => $"{FileNameWithoutExtension}_{Guid}";
+        public string UniqueFileNameWithoutExtension => $"{FileNameWithoutExtension}_{Guid.NewGuid()}";
         public string UniqueFileName => $"{UniqueFileNameWithoutExtension}{FileExtension}";
 
     }

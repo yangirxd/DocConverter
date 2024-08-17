@@ -10,7 +10,7 @@ var options = new WebApplicationOptions
                                      ? AppContext.BaseDirectory : default
 };
 
-var builder = WebApplication.CreateSlimBuilder(options);
+var builder = WebApplication.CreateBuilder(options);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
