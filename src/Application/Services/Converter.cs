@@ -16,9 +16,11 @@ namespace DocConverter.Application.Services
             var fullFileName = uniqueFileName + Path.GetExtension(formFile.FileName);
 
             await FileHelpers.SaveFileAsync(formFile, fullFileName, AppSettings.WorkingDirectory);
-            var outPath = Path.Combine(AppSettings.WorkingDirectory, $"{uniqueFileName}.{convertTo}");
+            
 
-            await converter.ExecuteAsync(fullFileName, $" --headless --convert-to {outPath}");
+            await converter.ExecuteAsync(fullFileName, $" --headless --convert-to {convertTo}");
+
+            var outPath = Path.Combine(AppSettings.WorkingDirectory, $"{uniqueFileName}.{convertTo}");
 
             var result = await FileHelpers.GetFileInBuffer(outPath);
             ClearFiles(Path.Combine(AppSettings.WorkingDirectory, fullFileName), outPath);
